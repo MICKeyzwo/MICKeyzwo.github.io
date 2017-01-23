@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>紙を折り曲げた時の折り目の出方を調べる</title>
+<style type="text/css">
+#result {
+	border: solid 1px black;
+}
+</style>
+<script type="text/javascript">
+window.addEventListener("load", () => {
+	var kai = Number(window.prompt("回数を整数で入力してください"));
+	var len = Math.pow(2, kai) - 1;
+	var arr = new Array(len);
+	for(var i = 0; i < len; i++){
+		arr[i] = -1;
+	}
+	for(var i = kai; i >= 1; i--){
+		var yamatani = 0;
+		var start = 0;
+		while(arr[start] != -1){
+			start++;
+		}
+		var step = Math.pow(2, (kai - i + 1));
+		for(var j = start; j < arr.length; j += step){
+			arr[j] = yamatani;
+			yamatani = (yamatani == 0 ? 1 : 0);
+		}
+	}
+	var result = "";
+	for(var i = 0; i < len; i++){
+		result += arr[i];
+	}
+	document.getElementById("result").innerHTML = result;
+});
+</script>
+</head>
+<body>
+<div id="result">
+
+</div>
+</body>
+</html>
