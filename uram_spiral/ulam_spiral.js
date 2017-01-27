@@ -4,14 +4,14 @@ window.addEventListener("load", () => {
 	let ctx = canvas.getContext("2d");
 	canvas.width = canvas.height = 400;
 	
-	const MAX_NUMBER = 150000;
+	const MAX_NUMBER = 160000;
 	
 	let pn = getPrimeNumbers(MAX_NUMBER);
 	console.log(pn);
 	drawUlamSpiral();
 	
 	function drawUlamSpiral(){
-		let x = 200;
+		let x = 199;
 		let y = 200;
 		let vector = 0;
 		let length = 1;
