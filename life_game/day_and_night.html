@@ -1,0 +1,42 @@
+﻿<html>
+<head>
+<title>Day & Night (B3678/S34678)</title>
+<style type="text/css">
+table {
+	background-color: #000;
+}
+
+.white {
+	width: 7px;
+	height: 7px;
+	background-color: #fff;
+}
+
+.black {
+	width: 7px;
+	height: 7px;
+	background-color: #000;
+}
+</style>
+<script type="text/javascript" src="life_game.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+function ruleBook(live, cnt){
+	if(live == 0){
+		if(cnt == 3 || cnt == 6 || cnt == 7 || cnt == 8){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else{
+		if(cnt == 3 || cnt == 4 || cnt == 6 || cnt == 7 || cnt == 8){
+			return 1;
+		}else{
+			return 0;
+		}
+	}
+}
+</script>
+</body>
+</html>
