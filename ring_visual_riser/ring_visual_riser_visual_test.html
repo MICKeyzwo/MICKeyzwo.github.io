@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>ring visual riser visual test</title>
+<style type="text/css">
+canvas {
+  background-color: black;
+  border: solid 1px black;
+}
+</style>
+<script type="text/javascript">
+window.addEventListener("load", () => {
+  let canvas = document.getElementsByTagName("canvas")[0];
+  let ctx = canvas.getContext("2d");
+  canvas.width = canvas.height = 400;
+  ctx.strokeStyle = ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+  ctx.lineWidth = 1;
+  let val = new Array(32);
+  for(let i = 0; i < 32; i++){
+    val[i] = 0;
+  }
+  let num = new Array(128);
+  let tiemr = setInterval(() => {
+    for(let i = 0; i < 128; i++){
+      num[i] = Math.floor(Math.random() * 100);
+    }
+    for(let i = 0; i < 128; i += 4){
+      let n = num[i] + num[i + 1] + num[i + 2] + num[i + 3];
+      n /= 4;
+      if(n > val[i / 4]){
+        val[i / 4] = n;
+      }else{
+        val[i / 4] *= 0.9;
+      }
+    }
+    ctx.setTransform(1 , 0 , 0 , 1 , 0 , 0);
+    ctx.clearRect(0, 0, 400, 400);
+    ctx.beginPath();
+    ctx.moveTo(0, 200);
+    ctx.lineTo(8, 200);
+    for(let i = 0; i < 128; i++){
+      ctx.lineTo(8 + 3 * i, 200 + (num[i] - 50));
+    }
+    ctx.lineTo(392, 200);
+    ctx.lineTo(400, 200);
+    ctx.stroke();
+    ctx.translate(200, 200);
+    for(let i = 0; i < 32; i++){
+      ctx.beginPath();
+      ctx.fillRect(-5, -80, 10, -val[i]);
+      ctx.rotate(Math.PI / 16);
+    }
+  }, 1000 / 30);
+});
+</script>
+</head>
+<body>
+<canvas></canvas>
+</body>
+</html>
