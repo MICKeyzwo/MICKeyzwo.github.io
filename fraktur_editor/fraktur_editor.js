@@ -1,0 +1,60 @@
+window.addEventListener("load", function(){
+  let alp = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+  let code = [
+    0x1d504, 0x1d505, 0x212d, 0x1d507, 0x1d508, 0x1d509, 0x1d50a, 0x210c, 0x2111, 0x1d50d, 0x1d50e, 0x1d50f, 0x1d510,
+    0x1d511, 0x1d512, 0x1d513, 0x1d514, 0x211c, 0x1d516, 0x1d517, 0x1d518, 0x1d519, 0x1d51a, 0x1d51b, 0x1d51c, 0x2128,
+    0x1d51e, 0x1d51f, 0x1d520, 0x1d521, 0x1d522, 0x1d523, 0x1d524, 0x1d525, 0x1d526, 0x1d527, 0x1d528, 0x1d529, 0x1d52a,
+    0x1d52b, 0x1d52c, 0x1d52d, 0x1d52e, 0x1d52f, 0x1d530, 0x1d531, 0x1d532, 0x1d533, 0x1d534, 0x1d535, 0x1d536, 0x1d537,
+    0x0020,
+    0x1d56c, 0x1d56d, 0x1d56e, 0x1d56f, 0x1d570, 0x1d571, 0x1d572, 0x1d573, 0x1d574, 0x1d575, 0x1d576, 0x1d577, 0x1d578,
+    0x1d579, 0x1d57a, 0x1d57b, 0x1d57c, 0x1d57d, 0x1d57e, 0x1d57f, 0x1d580, 0x1d581, 0x1d582, 0x1d583, 0x1d584, 0x1d585,
+    0x1d586, 0x1d587, 0x1d588, 0x1d589, 0x1d58a, 0x1d58b, 0x1d58c, 0x1d58d, 0x1d58e, 0x1d58f, 0x1d590, 0x1d591, 0x1d592,
+    0x1d593, 0x1d594, 0x1d595, 0x1d596, 0x1d597, 0x1d598, 0x1d599, 0x1d59a, 0x1d59b, 0x1d59c, 0x1d59d, 0x1d59e, 0x1d59f,
+    0x0020
+  ];
+
+  let ori = document.getElementById("origin");
+  let fra = document.getElementById("fraktur");
+  let tra = document.getElementById("trans");
+  let tra2 = document.getElementById("trans2");
+
+  ori.addEventListener("input", function(){
+    let val = ori.value;
+    for(let i = 0; i < val.length; i++){
+      if(alp.indexOf(val[i]) == -1) val = val.substr(0, i) + val.substr(i + 1, val.length);
+    }
+    ori.value = val;
+  });
+
+  tra.addEventListener("click", function(){
+    alphabetToFraktur(0);
+  });
+
+  tra2.addEventListener("click", function(){
+    alphabetToFraktur(1);
+  });
+
+  function alphabetToFraktur(mode){
+    let val = ori.value;
+    let res = "";
+    for(let i = 0; i < val.length; i++){
+      res += translate(code[alp.indexOf(val[i]) + (mode == 0 ? 0 : 53)]);
+    }
+    fra.value = res;
+  }
+
+  function translate(code){
+    var s;
+    var a;
+    var b;
+    if(code >= 0x10000){
+      var x = code - 0x10000;
+      a = Math.floor(x / 0x400) + 0xD800;
+      b = (x % 0x400) + 0xDC00;
+      s = String.fromCharCode(a,b);
+    }else{
+      s = String.fromCharCode(code);
+    }
+    return s;
+  }
+});
