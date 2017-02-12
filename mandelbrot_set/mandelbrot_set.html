@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<title>mandelbrot set</title>
+<style type="text/css">
+body{
+  font-size: 13pt;
+}
+canvas {
+  border: solid 1px black;
+  background-color: white;
+}
+.sub {
+  vertical-align: sub;
+  font-size: 70%;
+}
+</style>
+<script type="text/javascript" src="pixelDrawer.js"></script>
+<script type="text/javascript" src="mandelbrot_set.js"></script>
+</head>
+<body>
+<table>
+  <tr>
+    <td></td>
+    <td align="left">x<span class="sub">1</span></td>
+    <td align="right">x<span class="sub">2</span></td>
+  </tr>
+  <tr>
+    <td align="right" valign="top">y<span class="sub">1</span></td>
+    <td colspan="2" rowspan="2"><canvas id="canvas"></canvas></td>
+  </tr>
+  <tr>
+    <td align="right" valign="bottom">y<span class="sub">2</span></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td>x<span class="sub">1</span></td>
+    <td><input type="number" value="-2" min="-2" max="0.99" step="0.01" id="x1" /></td>
+  </tr>
+  <tr>
+    <td>y<span class="sub">1</span></td>
+    <td><input type="number" value="-1" min="-1" max="0.99" step="0.01" id="y1" /></td>
+  </tr>
+  <tr>
+    <td>x<span class="sub">2</span> - x<span class="sub">1</span></td>
+    <td><input type="number" value="3" min="0.01" max="3" step="0.01" id="dis" /></td>
+  </tr>
+  <tr>
+    <td>再帰深度</td>
+    <td><input type="number" value="300" min="100" max="500" step="10" id="deep" /></td>
+  </tr>
+  <tr>
+    <td>キャンバス幅</td>
+    <td><input type="number" value="400" min="50" max="1000" step="10" id="width" /></td>
+  </tr>
+</table>
+<input type="button" value="再描画" id="repaint" />
+</body>
+</html>
