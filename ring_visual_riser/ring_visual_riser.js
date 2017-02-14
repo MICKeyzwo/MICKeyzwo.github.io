@@ -4,10 +4,6 @@ window.addEventListener("load", () => {
   canvas.width = canvas.height = 400;
   ctx.strokeStyle = ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
   ctx.lineWidth = 1;
-  let val = new Uint8Array(32);
-  for(let i = 0; i < 32; i++){
-    val[i] = 0;
-  }
   let source;
   let timer;
   let audioCtx = new AudioContext();
@@ -38,9 +34,6 @@ window.addEventListener("load", () => {
     analyser.getByteTimeDomainData(wave);
     ctx.setTransform(1 , 0 , 0 , 1 , 0 , 0);
     ctx.clearRect(0, 0, 400, 400);
-    for(let i = 0; i < 32; i++){
-      val[i] = spectrums[i * 5];
-    }
     ctx.beginPath();
     ctx.moveTo(0, 327 - wave[0]);
     for(let i = 1; i < 512; i++){
@@ -51,7 +44,7 @@ window.addEventListener("load", () => {
     ctx.translate(200, 200);
     for(let i = 0; i < 32; i++){
       ctx.beginPath();
-      ctx.fillRect(-5, -85, 15, val[i] / -2);
+      ctx.fillRect(-5, -85, 15, spectrums[i * 5] / -2);
       ctx.rotate(Math.PI / 8);
       if(i == 15) ctx.rotate(Math.PI / 16);
     }
