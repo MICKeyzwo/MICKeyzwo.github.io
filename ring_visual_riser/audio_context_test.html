@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>audio context test</title>
+<style type="text/css">
+
+</style>
+<script type="text/javascript">
+window.addEventListener("load", () => {
+  let source;
+  let audioCtx = new AudioContext();
+  let fileReader = new FileReader();
+  let analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 2048;
+  analyser.connect(audioCtx.destination);
+  document.getElementById("file").addEventListener("change", (e) => {
+    fileReader.readAsArrayBuffer(e.target.files[0]);
+  });
+  fileReader.addEventListener("load", () => {
+    audioCtx.decodeAudioData(fileReader.result, (buffer) => {
+      if(source){
+        source.stop();
+      }
+      source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(analyser);
+      source.start(0);
+    });
+  });
+});
+</script>
+</head>
+<body>
+<input type="file" id="file" />
+</body>
+</html>
