@@ -9,6 +9,7 @@ window.addEventListener("load", () => {
   let audioCtx = new AudioContext();
   let fileReader = new FileReader();
   let analyser = audioCtx.createAnalyser();
+  let playing = 0;
   analyser.fftSize = 1024;
   analyser.connect(audioCtx.destination);
   document.getElementById("file").addEventListener("change", (e) => {
@@ -24,6 +25,7 @@ window.addEventListener("load", () => {
       source.buffer = buffer;
       source.connect(analyser);
       source.start(0);
+      playing = 1;
       timer = setInterval(tick, 1000 / 30);
     });
   });
@@ -49,4 +51,15 @@ window.addEventListener("load", () => {
       if(i == 15) ctx.rotate(Math.PI / 16);
     }
   }
+  document.getElementById("suspend").addEventListener("click", (e) => {
+    if(playing == 1){
+      audioCtx.suspend();
+      e.target.getElementsByTagName("i")[0].className = "fa fa-play";
+      playing = 2;
+    }else if(playing == 2){
+      audioCtx.resume();
+      e.target.getElementsByTagName("i")[0].className = "fa fa-pause";
+      playing = 1;
+    }
+  });
 });
