@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
 
   //UIを設定、画面上に反映
   let wrapper = document.createElement("div");
@@ -263,7 +263,7 @@
             }
           }
         }
-      }else if(panels[y][x].num > 0){
+      }else if(panels[y][x].num > 0 && flg){
         let count = 0;
         for(let i = 0; i < 9; i++){
           let dx = i % 3 - 1 + x;
@@ -275,8 +275,8 @@
           for(let i = 0; i < 9; i++){
             let dx = i % 3 - 1 + x;
             let dy = ~~(i / 3) - 1 + y;
-            if(dy < 0 || dy > 8 || dx < 0 || dx > 8 || (x == dy && y == dx)) continue;
-            if(flg) pushed(dx, dy, false);
+            if(dy < 0 || dy > 8 || dx < 0 || dx > 8 || (y == dy && x == dx)) continue;
+            pushed(dx, dy, false);
           }
         }
       }
