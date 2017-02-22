@@ -49,7 +49,7 @@
   let ctx = canvas.getContext("2d");
 
   //以下ゲーム処理
-  let numColor = ["blue", "green", "red", "navy", "brown", "cyan", "gray"];
+  let numColor = ["blue", "green", "red", "navy", "brown", "cyan", "black", "gray"];
   let Panel = function(x, y){
     this.x = x;
     this.y = y;
@@ -162,7 +162,8 @@
           time.innerHTML = ~~((Date.now() - startTime) / 100) / 10;
         }, 1000 / 30);
         gameState = 1;
-      }if(gameState == 1){
+      }
+      if(gameState == 1){
         pushed(x, y, true);
         let count = 0;
         for(let i = 0; i < 9; i++){
@@ -197,15 +198,7 @@
       if(!panels[y][x].open){
         panels[y][x].open = true;
         if(panels[y][x].mine){
-          clearInterval(timer);
-          gameState = 2;
-          for(let i = 0; i < 9; i++){
-            for(let j = 0; j < 9; j++){
-              if(panels[i][j].mine) panels[i][j].open = true;
-            }
-          }
-          drawPanels();
-          alert("Game Over!!");
+          missed();
         }else{
           if(panels[y][x].num == 0){
             let arr = new Array(9);
@@ -251,15 +244,7 @@
               }
             }
             if(mineFlg){
-              clearInterval(timer);
-              gameState = 2;
-              for(let i = 0; i < 9; i++){
-                for(let j = 0; j < 9; j++){
-                  if(panels[i][j].mine) panels[i][j].open = true;
-                }
-              }
-              drawPanels();
-              alert("Game Over!!");
+              missed();
             }
           }
         }
@@ -281,6 +266,17 @@
         }
       }
     }
+  }
+  function missed(){
+    clearInterval(timer);
+    gameState = 2;
+    for(let i = 0; i < 9; i++){
+      for(let j = 0; j < 9; j++){
+        if(panels[i][j].mine) panels[i][j].open = true;
+      }
+    }
+    drawPanels();
+    alert("Game Over!!");
   }
 
   preSet();

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>hex mine sweeper</title>
+<style type="text/css">
+#wrapper {
+  text-align: center;
+}
+.control {
+  display: inline-block;
+}
+#canvas {
+  display: inline-block;
+  border: solid 1px black;
+}
+#time, #flag {
+  background-color: #ddd;
+}
+</style>
+<script type="text/javascript" src="hex_mine.js"></script>
+</head>
+<body>
+  <div id="wrapper">
+    <div class="control">
+      <span id="time">0</span>
+      <input type="button" id="reset" value="reset" />
+      <span id="flag">0</span>
+    </div>
+    <br>
+    <canvas id="canvas"></canvas>
+    <br>
+    <div class="control">
+      <input type="button" id="easy" value="easy" />
+      <input type="button" id="normal" value="normal" />
+      <input type="button" id="hard" value="hard" /> 
+    </div>
+  </div>
+</body>
+</html>
