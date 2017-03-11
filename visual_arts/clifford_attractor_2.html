@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>clifford attractor mk2</title>
+<style type="text/css">
+.canvasWrap {
+  position: relative;
+}
+.canvasWrap canvas {
+  border: solid 1px black;
+  background-color: white;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+.canvasWrap .fps {
+  border: solid 1px black;
+  background-color: white;
+  position: absolute;
+  top: 0px;
+  right: -2px;
+  width: 40px;
+  font-size: 80%;
+  text-align: left;
+}
+.canvasWrap .dots {
+  border: solid 1px black;
+  background-color: white;
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 80px;
+  font-size: 80%;
+  text-align: right;
+}
+</style>
+<script type="text/javascript" src="clifford_attractor_2.js"></script>
+<script type="text/javascript" src="pixelDrawer.js"></script>
+</head>
+<body>
+  <table>
+    <tr>
+      <td>a</td>
+      <td><input type="number" value="0" min="-2" max="2" step="0.1" id="valueA"/></td>
+    </tr>
+    <tr>
+      <td>b</td>
+      <td><input type="number" value="0" min="-2" max="2" step="0.1" id="valueB"/></td>
+    </tr>
+    <tr>
+      <td>c</td>
+      <td><input type="number" value="0" min="-2" max="2" step="0.1" id="valueC"/></td>
+    </tr>
+    <tr>
+      <td>d</td>
+      <td><input type="number" value="0" min="-2" max="2" step="0.1" id="valueD"/></td>
+    </tr>
+    <tr>
+      <td>canvasSize</td>
+      <td><input type="number" value="600" min="50" max="5000" step="10" id="size" /></td>
+    </tr>
+  </table>
+  <input type="button" type="button" value="generating start" id="gene" />
+  <br>
+  <div class="canvasWrap" id="canvasWrap">
+    <canvas id="canvas"></canvas>
+    <div class="fps" id="fps">fps:0</div>
+    <div class="dots" id="dots">dots:0</div>
+  </div>
+</body>
+</html>
