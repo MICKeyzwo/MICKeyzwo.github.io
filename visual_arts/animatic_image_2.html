@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>animatic image 2</title>
+<style type="text/css">
+
+</style>
+<script type="text/javascript" src="pixelDrawer.js"></script>
+<script type="text/javascript" src="hsvParser.js"></script>
+<script type="text/javascript">
+window.addEventListener("load", () => {
+	let canvas = document.getElementById("canvas");
+	let ctx = canvas.getContext("2d");
+	let image = new Image();
+	let colorNumE = document.getElementById("colorNum");
+	let colorNum = 256 / Number(colorNumE.value);;
+	colorNumE.addEventListener("input", () => {
+		colorNum = 256 / Number(colorNumE.value);
+	});
+	let bokashiNumE = document.getElementById("bokashiNum");
+	let bokashiNum = Number(bokashiNumE.value);;
+	bokashiNumE.addEventListener("input", () => {
+		bokashiNum = Number(bokashiNumE.value);
+	});
+	let bokashiAreE = document.getElementById("bokashiAre");
+	let bokashiAre = Number(bokashiAreE.value);
+	bokashiAreE.addEventListener("input", () => {
+		bokashiAre = Number(bokashiAreE.value);
+	});
+	document.getElementById("file").addEventListener("change", (e) => {
+		let fileReader = new FileReader();
+		fileReader.readAsDataURL(e.target.files[0]);
+		fileReader.addEventListener("load", () => {
+			image.src = fileReader.result;
+		});
+	});
+	document.getElementById("reset").addEventListener("click", () => {
+		ctx.drawImage(image, 0, 0);
+	});
+	image.src = "zoo.jpg";
+	image.addEventListener("load", () => {
+		canvas.width = image.width;
+		canvas.height = image.height;
+		ctx.drawImage(image, 0, 0);
+	});
+	let geneE = document.getElementById("gene");
+	geneE.addEventListener("click", generate);
+	function generate(){
+		ctx.drawImage(image, 0, 0);
+		let pd = new PixelDrawer(ctx.getImageData(0, 0, canvas.width, canvas.height));
+		let pd2 = new PixelDrawer(pd.getImageData());
+		let c;
+		let n;
+		let v;
+		for(let h = 0; h < bokashiNum; h++){
+			for(let i = 0; i < canvas.height; i++){
+				for(let j = 0; j < canvas.width; j++){
+					n = 0;
+					c = {r: 0, g: 0, b: 0};
+					for(let k = -bokashiAre; k < bokashiAre + 1; k++){
+						for(let l = -bokashiAre; l < bokashiAre + 1; l++){
+							if(i + k < 0 || i + k >= canvas.height || j + l < 0 || j + l >= canvas.width) continue;
+							v = pd.getColor(j + l, i + k);
+							c.r += v.r;
+							c.g += v.g;
+							c.b += v.b;
+							n++;
+						}
+					}
+					c.r = Math.round(c.r / n);
+					c.g = Math.round(c.g / n);
+					c.b = Math.round(c.b / n);
+					c.a = 255;
+					pd2.setColor(j, i, c);
+				}
+			}
+			pd = new PixelDrawer(pd2.getImageData());
+		}
+		for(let i = 0; i < canvas.height; i++){
+			for(let j = 0; j < canvas.width; j++){
+				c = pd.getColor(j, i);
+      	let hsv = rgbToHsv(c);
+				hsv.h = Math.ceil(hsv.h / colorNum) * colorNum;
+				hsv.s = Math.ceil(hsv.s / colorNum) * colorNum;
+				hsv.v = Math.ceil(hsv.v / colorNum) * colorNum;
+        let rgb = hsvToRgb(hsv);
+				for(let prop in rgb) rgb[prop] = Math.round(rgb[prop]);
+        rgb.a = 255;
+				pd.setColor(j, i, rgb);
+			}
+		}
+		ctx.putImageData(pd.getImageData(), 0, 0);
+	}
+});
+</script>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <br>
+  <table>
+  	<tr>
+  		<td>
+  			色階層数
+  		</td>
+  		<td>
+  			<input type="number" value="16" min="1" max="256" step="1" id="colorNum" />
+  		</td>
+  	</tr>
+  	<tr>
+  		<td>
+  			ぼかし回数
+  		</td>
+  		<td>
+  			<input type="number" value="1" min="0" max="10" step="1" id="bokashiNum" />
+  		</td>
+  	</tr>
+		<tr>
+  		<td>
+  			ぼかし範囲
+  		</td>
+  		<td>
+  			<input type="number" value="1" min="0" max="10" step="1" id="bokashiAre" />
+  		</td>
+  	</tr>
+  </table>
+  <input type="button" value="処理実行" id="gene" />
+	<input type="button" value="リセット" id="reset" />
+	<br>
+	<input type="file" id="file" />
+</body>
+</html>
