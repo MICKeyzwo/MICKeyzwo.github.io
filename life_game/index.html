@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>game of life</title>
+<style type="text/css">
+.wrapper {
+    width: 420px;
+    height: 420px;
+    overflow: auto;
+}
+#canvas {
+    backface-visibility:hidden;
+    width: 400px;
+    height: 400px;
+    background-color: black;
+}
+</style>
+<script type="text/javascript">
+window.addEventListener("load", () => {
+    let scaleInput = document.getElementById("scale");
+    let scaleValue = document.getElementById("scaleV");
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+    canvas.width = canvas.height = 400;
+    let data = new Array(400), next = new Array(400);
+    for(let i = 0; i < 400; i++){
+        data[i] = new Uint8Array(400);
+        next[i] = new Uint8Array(400);
+    }
+    let rnd = 0;
+    for(let i = 0; i < 400; i++){
+        for(let j = 0; j < 400; j++){
+            rnd = (Math.random() * 5) | 0;
+            data[i][j] = rnd == 0 ? 1 : 0;
+        }
+    }
+    let mod = (n, m) => (n % m + m) % m, sum, base, imaged;
+    let timer = setInterval(() => {
+        ctx.clearRect(0, 0, 400, 400);
+        sum = 0;
+        for(let y = 0; y < 400; y++){
+            for(let x = 0; x < 400; x++){
+                sum = 0;
+                for(let i = 0; i < 3; i++){
+                    for(let j = 0; j < 3; j++){
+                        if(i == 1 && j == 1) continue;
+                        sum += data[mod(y + i - 1, 400)][mod(x + j - 1, 400)];
+                    }
+                }
+                if(data[y][x] == 0 && sum == 3){
+                    next[y][x] = 1;
+                }else if(data[y][x] == 1 && (sum == 2 || sum == 3)){
+                    next[y][x] = 1;
+                }else{
+                    next[y][x] = 0;
+                }
+            }
+        }
+        imgd = ctx.getImageData(0, 0, 400, 400);
+        base = 0;
+        for(let y = 0; y < 400; y++){
+            for(let x = 0; x < 400; x++){
+                data[y][x] = next[y][x];
+                next[y][x] = 0;
+                if(data[y][x] == 1){
+                    base = (400 * y + x) * 4;
+                    imgd.data[base] = imgd.data[base + 1] = imgd.data[base + 2] = imgd.data[base + 3] = 255;
+                }
+            }
+        }
+        ctx.putImageData(imgd, 0, 0);
+    }, 1000 / 20);
+    scaleInput.addEventListener("input", (e) => {
+        let scale = Number(e.target.value);
+        canvas.style.width = canvas.style.height = ((400 * scale) | 0) + "px";
+        scaleValue.textContent = "*" + scale;
+    });
+    document.getElementById("reset").addEventListener("click", (e) => {
+        for(let i = 0; i < 400; i++){
+            for(let j = 0; j < 400; j++){
+                rnd = (Math.random() * 4) | 0;
+                data[i][j] = rnd == 0 ? 1 : 0;
+            }
+        }
+    });
+});
+</script>
+</head>
+<body>
+<div class="wrapper">
+<canvas id="canvas"></canvas>
+</div>
+<input id="scale" type="range" value="1" min="1" max="5" step="0.5" />
+<span id="scaleV">*1</span>
+<input id="reset" type="button" value="Reset" />
+</body>
+</html>
