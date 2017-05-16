@@ -1,4 +1,4 @@
-window.addEventListener("load", () => {
+﻿window.addEventListener("load", () => {
 
   let time = document.getElementById("time");
   let flags = document.getElementById("flag");
