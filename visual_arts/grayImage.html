@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>gray image</title>
+<style type="text/css">
+
+</style>
+<script type="text/javascript" src="indexParser.js"></script>
+<script type="text/javascript">
+window.addEventListener("load", () => {
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+    let image = new Image();
+    let rgb_param = [1, 1, 1];
+    let rgb_vals = document.getElementsByClassName("rgb_val");
+    for(let i = 0; i < rgb_vals.length; i++){
+        rgb_vals[i].addEventListener("input", (e) => {
+            rgb_param[i] = +e.target.value;
+            if(image.src) toGrayImage();
+        });
+    }
+    document.getElementById("file").addEventListener("change", (e) => {
+        let fileReader = new FileReader();
+        fileReader.readAsDataURL(e.target.files[0]);
+        fileReader.addEventListener("load", () => {
+            image.src = fileReader.result;
+        });
+    });
+    image.addEventListener("load", () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        toGrayImage();
+    });
+    function toGrayImage(){
+        ctx.drawImage(image, 0, 0);
+        let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        for(let i = 0; i < canvas.height; i++){
+            for(let j = 0; j < canvas.width; j++){
+                let index = xy2index(j, i, canvas.width);
+                let color = ((imgData.data[index] + imgData.data[index + 1] + imgData.data[index + 2]) / 3) | 0;
+                //imgData.data[index] = imgData.data[index + 1] = imgData.data[index + 2] = color;
+                imgData.data[index] = (color * rgb_param[0]) | 0;
+                imgData.data[index + 1] = (color * rgb_param[1]) | 0;
+                imgData.data[index + 2] = (color * rgb_param[2]) | 0;
+           }
+        }
+        ctx.putImageData(imgData, 0, 0);
+    }
+});
+</script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<input type="file" id="file" />
+<br>
+R<input type="range" class="rgb_val" value="1" min="0" max="1" step="0.1" /><br>
+G<input type="range" class="rgb_val" value="1" min="0" max="1" step="0.1" /><br>
+B<input type="range" class="rgb_val" value="1" min="0" max="1" step="0.1" /><br>
+</body>
+</html>
