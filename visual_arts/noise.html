@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>noise</title>
+<style type="text/css">
+#canvas {
+    display: block;
+    width: 256px;
+    height: 256px;
+    border: solid 1px black;
+}
+</style>
+<script type="text/javascript" src="indexParser.js"></script>
+<script type="text/javascript">
+window.addEventListener("load", () => {
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+    canvas.width = canvas.height = 256;
+    let color = initArray(256, (index, arr) => {
+        return initArray(256, 0);
+    });
+    let x = ranInt(2, 5), y = ranInt(4, 12), z = ranInt(8, 15);
+    let wave = initArray(256, (index, arr) => {
+        return Math.cos(Math.PI * x * index / 256)
+             + Math.cos(Math.PI * y * index / 256 + Math.PI / 2)
+             + Math.cos(Math.PI * z * index / 256 + Math.PI / 5)
+             + Math.random() * 0.1;
+    });
+    let min = Number.MAX_VALUE;
+    for(let i = 0; i < 256; i++){
+        if(wave[i] < min) min = wave[i];
+    }
+    min = Math.abs(min);
+    for(let i = 0; i < 256; i++){
+        wave[i] += min;
+    }
+    let max = 0;
+    for(let i = 0; i < 256; i++){
+        if(wave[i] > max) max = wave[i];
+    }
+    for(let i = 0; i < 256; i++){
+        wave[i] = (255 * (wave[i] / max)) | 0;
+    }
+    //console.log(wave);
+    let iData = ctx.getImageData(0, 0, 256, 256);
+    for(let i = 0; i < 256; i++){
+        for(let j = 0; j < 256; j++){
+            let ind = xy2index(j, i, 256);
+            iData.data[ind] = wave[i];
+            iData.data[ind + 1] = wave[i];
+            iData.data[ind + 2] = wave[i];
+            iData.data[ind + 3] = 255;
+        }
+    }
+    ctx.putImageData(iData, 0, 0);
+
+
+    function initArray(len, init){
+        let arr = new Array(len);
+        let type1 = typeof init === "function";
+        let type2 = typeof init === "undefined";
+        for(let i = 0; i < len; i++){
+            arr[i] = type1 ? init(i, arr) : type2 ? i : init;
+        }
+        return arr;
+    }
+    function ranInt(min, max){
+        return ((Math.random() * (max - min)) | 0) + min;
+    }
+});
+</script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+</body>
+</html>

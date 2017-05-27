@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>filler</title>
+<style type="text/css">
+#canvas {
+    border: solid 1px black;
+    width: 400px;
+    height: 300px;
+    background-color: white;
+    display: block;
+}
+</style>
+<script type="text/javascript" src="indexParser.js"></script>
+<script type="text/javascript">
+window.addEventListener("load", () => {
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+    canvas.width = 400;
+    canvas.height = 300;
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    let mode = 0;
+    let pushed = false;
+    let lx, ly;
+    canvas.addEventListener("mousedown", (e) => {
+        let rect = e.target.getBoundingClientRect();
+        lx = Math.round(400 * (e.clientX - rect.left) / canvas.clientWidth);
+        ly = Math.round(300 * (e.clientY - rect.top) / canvas.clientHeight);
+        if(mode == 0){
+            pushed = true;
+        }else if(mode == 1){
+            fill(lx, ly);
+        }
+    });
+    canvas.addEventListener("mouseup", () => pushed = false);
+    canvas.addEventListener("mouseleave", () => pushed = false);
+    canvas.addEventListener("contextmenu", e => e.preventDefault());
+    canvas.addEventListener("mousemove", (e) => {
+        if(pushed){
+            let rect = e.target.getBoundingClientRect();
+            let x = Math.round(400 * (e.clientX - rect.left) / canvas.clientWidth);
+            let y = Math.round(300 * (e.clientY - rect.top) / canvas.clientHeight);
+            ctx.beginPath();
+            ctx.moveTo(lx, ly);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            lx = x;
+            ly = y;
+        }
+    });
+    document.getElementById("mode_switch").addEventListener("click", (e) => {
+        if(mode == 0){
+            mode = 1;
+            e.target.value = "fill";
+        }else if(mode == 1){
+            mode = 0;
+            e.target.value = "stroke";
+        }
+    });
+    function fill(x, y){
+        let iData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let flags = new Array(canvas.height);
+        for(let i = 0; i < flags.length; i++){
+            flags[i] = new Array(canvas.width);
+        }
+        for(let i = 0; i < flags.length; i++){
+            for(let j = 0; j < flags[i].length; j++){
+                flags[i][j] = false;
+            }
+        }
+        flags[y][x] = true;
+        let nind = xy2index(x, y, canvas.width);
+        let xstuck = [x];
+        let ystuck = [y];
+        let nx, ny, rx, ry, rind;
+        do{
+            nx = xstuck.pop();
+            ny = ystuck.pop();
+            for(let dy = -1; dy < 2; dy++){
+                for(let dx = -1; dx < 2; dx++){
+                    rx = nx + dx;
+                    ry = ny + dy;
+                    if(rx < 0 || rx >= canvas.width || ry < 0 || ry >= canvas.height || (dx == 0 && dy == 0)) continue;
+                    rind = xy2index(rx, ry, canvas.width);
+                    if(!flags[ry][rx]){
+                        if(iData.data[nind] == iData.data[rind]
+                        && iData.data[nind + 1] == iData.data[rind + 1] 
+                        && iData.data[nind + 2] == iData.data[rind + 2] 
+                        && iData.data[rind + 3] == iData.data[rind + 3]){
+                            flags[ry][rx] = true;
+                            xstuck.push(rx);
+                            ystuck.push(ry);
+                        }
+                    }
+                }
+            }
+        }while(xstuck.length > 0);
+        for(let i = 0; i < flags.length; i++){
+            for(let j = 0; j < flags[i].length; j++){
+                if(flags[i][j]){
+                    rind = xy2index(j, i, canvas.width);
+                    iData.data[rind] = 0;
+                    iData.data[rind + 1] = 0;
+                    iData.data[rind + 2] = 0;
+                    iData.data[rind + 3] = 255;
+                }
+            }
+        }
+        ctx.putImageData(iData, 0, 0);
+    }
+});
+</script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<input type="button" value="stroke" id="mode_switch" />
+</body>
+</html>
