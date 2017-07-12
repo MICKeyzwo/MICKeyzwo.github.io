@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>k-means subtracting color</title>
+<style type="text/css">
+#canvas {
+    border: solid 1px black;
+    display: block;
+}
+
+</style>
+<script type="text/javascript">
+window.addEventListener("load", () => {
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    let image = new Image();
+    document.getElementById("file").addEventListener("change", e => {
+        let fr = new FileReader();
+        fr.readAsDataURL(e.target.files[0]);
+        fr.addEventListener("load", e => {
+            image.src = fr.result;
+        })
+    })
+    image.addEventListener("load", () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.drawImage(image, 0, 0);
+    })
+    const color_num = document.getElementById("color_num");
+    let colors = parseInt(color_num.value);
+    color_num.addEventListener("input", e => {
+        colors = parseInt(color_num.value);
+    })
+    const step_num = document.getElementById("step_num");
+    let step = parseInt(step_num.value);
+    step_num.addEventListener("input", e => {
+        step = parseInt(step_num.value);
+    })
+    document.getElementById("sub_color").addEventListener("click",
+        () => subtractingColor(canvas, ctx, colors)
+    )
+    document.getElementById("reset").addEventListener("click",
+        () => ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+    )
+    function subtractingColor(can, ctx, col) {
+        console.time("sub");
+        let imd = ctx.getImageData(0, 0, can.width, can.height);
+        let min = arr => {
+            let mini = 0;
+            for(var i = 0; i < arr.length; i++) 
+                if(arr[i] < arr[mini]) mini = i;
+            return mini;
+        }
+        let centers = new Array(col);
+        for(var i = 0; i < centers.length; i++) 
+            centers[i] = new Array(3);
+        for(var i = 0; i < centers.length; i++) {
+            let rnd = ((Math.random() * imd.data.length / 4) | 0) * 4;
+            for(var j = 0; j < centers[i].length; j++) {
+                centers[i][j] = imd.data[rnd + j];
+            }
+        }
+        let group = new Array(imd.data.length / 4);
+        for(var i = 0; i < group.length; i++) 
+            group[i] = 0;
+        let dis = new Array(group.length);
+        for(var i = 0; i < dis.length; i++) 
+            dis[i] = new Array(col);
+        let sum = new Array(centers.length);
+        let cnt = new Array(centers.length);
+        let nxtg /*, move*/;
+        //do {
+        for(var k = 0; k < step; k++){
+            //move = 0;
+            for(var i = 0; i < group.length; i++) {
+                for(var j = 0; j < centers.length; j++) {
+                    dis[i][j] = Math.sqrt(
+                        Math.pow(centers[j][0] - imd.data[i * 4], 2) +
+                        Math.pow(centers[j][1] - imd.data[i * 4 + 1], 2) +
+                        Math.pow(centers[j][2] - imd.data[i * 4 + 2], 2)
+                    );
+                }
+            }
+            for(var i = 0; i < group.length; i++) {
+                nextg = min(dis[i]);
+                if(group[i] !== nextg) {
+                    //move++;
+                    group[i] = nextg;
+                }
+            }
+            for(var i = 0; i < sum.length; i++) {
+                sum[i] = [0, 0, 0];
+                cnt[i] = 0;
+            }
+            for(var i = 0; i < group.length; i++) {
+                sum[group[i]][0] += imd.data[i * 4];
+                sum[group[i]][1] += imd.data[i * 4 + 1];
+                sum[group[i]][2] += imd.data[i * 4 + 2];
+                cnt[group[i]]++;
+            }
+            for(var i = 0; i < centers.length; i++){
+                centers[i][0] = sum[i][0] / cnt[i];
+                centers[i][1] = sum[i][1] / cnt[i];
+                centers[i][2] = sum[i][2] / cnt[i];
+            }
+        } //while(move != 0)
+        for(var i = 0; i < group.length; i++){
+            imd.data[i * 4] = centers[group[i]][0];
+            imd.data[i * 4 + 1] = centers[group[i]][1];
+            imd.data[i * 4 + 2] = centers[group[i]][2];
+            imd.data[i * 4 + 3] = 255;
+        }
+        ctx.putImageData(imd, 0, 0);
+        //centers.forEach(item => console.log(item));
+        console.timeEnd("sub");
+    }
+})
+</script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<input type="file" id="file" /><br>
+色数<input type="number" value="16" min="2" max="256" step="1" id="color_num" /><br>
+k-means収束<input type="number" value="10" min="1" max="30" step="1" id="step_num" /><br>
+<input type="button" value="減色!" id="sub_color" />
+<input type="button" value="リセット" id="reset" />
+</body>
+</html>
