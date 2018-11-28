@@ -1,0 +1,13 @@
+body {
+  background: #eee;
+}
+
+.wrap {
+  width: 100vw;
+}
+
+.app {
+  background: white;
+  margin: 0 auto;
+  width: 80%;
+}
